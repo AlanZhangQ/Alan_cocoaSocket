@@ -1,4 +1,4 @@
-# Alan_cocoaSocket
+# Alan_CocoaSocket
 高仿微信，基于CocoaAsyncSocket实现微信长链接，实现微信发送文字，语音，图片，视频
 
 Github地址：https://github.com/AlanZhangQ/Alan_cocoaSocket.git，如果有用，请点star.
@@ -45,6 +45,7 @@ TCP开发使用的文件
 2.初始化聊天Handler单例，并将其设置成接收TCP信息的代理。
 
 #pragma mark - 初始化聊天handler单例
+```
 + (instancetype)shareInstance
 {
     static ChatHandler *handler = nil;
@@ -67,8 +68,9 @@ TCP开发使用的文件
     }
     return self;
 }
+```
 3.连接测试或正式服务器端口
-
+```
 #pragma mark - 连接服务器端口
 - (void)connectServerHost
 {
@@ -80,8 +82,9 @@ TCP开发使用的文件
         NSLog(@"----------------连接服务器成功----------------");
     }
 }
+```
 4.服务器端口连接成功，TCP连接正式建立，配置SSL 相当于https 保证安全性 , 这里是单向验证服务器地址 , 仅仅需要验证服务器的IP即可
-
+```
 #pragma mark - TCP连接成功建立 ,配置SSL 相当于https 保证安全性 , 这里是单向验证服务器地址 , 仅仅需要验证服务器的IP即可
 - (void)socket:(GCDAsyncSocket *)sock didConnectToHost:(NSString *)host port:(uint16_t)port
 {
@@ -93,8 +96,9 @@ TCP开发使用的文件
     [settings setObject:@"此处填服务器IP地址" forKey:GCDAsyncSocketSSLPeerName];
     [_chatSocket startTLS:settings];
 }
+```
 5.SSL验证成功，发送登录验证，开启读入流
-
+```
 #pragma mark - TCP成功获取安全验证
 - (void)socketDidSecure:(GCDAsyncSocket *)sock
 {
@@ -111,8 +115,9 @@ TCP开发使用的文件
     //开启读入流
     [self beginReadDataTimeOut:-1 tag:0];
 }
+```
 6.发送消息给服务端
-
+```
 #pragma mark - 发送消息
 - (void)sendMessage:(ChatModel *)chatModel timeOut:(NSUInteger)timeOut tag:(long)tag
 {
@@ -129,10 +134,11 @@ TCP开发使用的文件
     //写入数据
     [_chatSocket writeData:messageData withTimeout:1 tag:1];
 }
+```
 声明：cocoaAsyncSocket主要是通过- (void)writeData:(NSData *)data withTimeout:(NSTimeInterval)timeout tag:(long)tag这个方法由客户端发送数据给服务器。
 
 7.接收服务器端消息
-
+```
 #pragma mark - 接收到消息
 - (void)socket:(GCDAsyncSocket *)sock didReadData:(NSData *)data withTag:(long)tag
 {
@@ -151,8 +157,9 @@ TCP开发使用的文件
         NSLog(@"------------------接收到服务器心跳-------------------");
         return;
     }
+    ```
 8.socket已经断开连接.
-
+```
 #pragma mark - TCP已经断开连接
 - (void)socketDidDisconnect:(GCDAsyncSocket *)sock withError:(NSError *)err
 {
@@ -169,8 +176,9 @@ TCP开发使用的文件
         NSLog(@"----------------重连次数已用完------------------");
     }
 }
+```
 9.心跳连接的建立
-
+```
 - (dispatch_source_t)beatTimer
 {
     if (!_beatTimer) {
@@ -192,6 +200,7 @@ TCP开发使用的文件
     }
     return _beatTimer;
 }
+```
 声明：心跳连接是确认服务器端和客户端是否建立连接的测试，需要服务器端和客户端确定心跳包和心跳间隔。
 
 四.IM中UI的具体实现
@@ -205,7 +214,7 @@ TCP开发使用的文件
 
 
 录音的主要代码:
-
+```
 - (void)setSesstion
 {
     _session = [AVAudioSession sharedInstance];
@@ -246,8 +255,9 @@ TCP开发使用的文件
     _recorder.delegate        = self;
     [_recorder prepareToRecord];
 }
+```
 转换格式的主要代码：
-
+```
 - (void)audio_PCMtoMP3:(NSTimeInterval)recordTime
 {
     NSString *cafFilePath = [self cafPath];
@@ -317,8 +327,9 @@ TCP开发使用的文件
         [_delegate endConvertWithData:voiceData seconds:recordTime];
     }
 }
+```
 播放的主要代码如下：
-
+```
 - (instancetype)initWithPath:(NSString *)path
 {
     if (self = [super init]) {
@@ -347,6 +358,7 @@ TCP开发使用的文件
 {
     [self.player play];
 }
+```
 3.图片和视频消息，主要是通过阿里巴巴的TZImagerPicker框架实现存取，实现效果如下：
 
 
