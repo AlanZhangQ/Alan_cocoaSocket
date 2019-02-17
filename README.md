@@ -10,17 +10,15 @@ Github地址：https://github.com/AlanZhangQ/Alan_cocoaSocket.git，如果有用
 CocoaAsyncSocket中主要包含两个类:
 
 1.GCDAsyncSocket.
-
-1
-2
-用GCD搭建的基于TCP/IP协议的socket网络库
-GCDAsyncSocket is a TCP/IP socket networking library built atop Grand Central Dispatch. -- 引自CocoaAsyncSocket.
+```
+1 用GCD搭建的基于TCP/IP协议的socket网络库
+2 GCDAsyncSocket is a TCP/IP socket networking library built atop Grand Central Dispatch. -- 引自CocoaAsyncSocket.
+```
 2.GCDAsyncUdpSocket.
-
-1
-2
-用GCD搭建的基于UDP/IP协议的socket网络库.
-GCDAsyncUdpSocket is a UDP/IP socket networking library built atop Grand Central Dispatch..-- 引自CocoaAsyncSocket.
+```
+1 用GCD搭建的基于UDP/IP协议的socket网络库.
+2 GCDAsyncUdpSocket is a UDP/IP socket networking library built atop Grand Central Dispatch..-- 引自CocoaAsyncSocket.
+```
 二.下载CocoaAsyncSocket
 
 首先,需要到这里下载CocoaAsyncSocket.
