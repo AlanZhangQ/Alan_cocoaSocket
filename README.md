@@ -25,13 +25,13 @@ CocoaAsyncSocket中主要包含两个类:
 
 下载后可以看到文件所在位置.
 
-
+![Alan_CocoaSocket](https://raw.githubusercontent.com/AlanZhangQ/Alan_cocoaSocket/master/ScreenShot/CocoaAsyncSoket_2.png)
 
 文件路径
 
 这里只要拷贝以下两个文件到项目中.
 
-
+![Alan_CocoaSocket](https://raw.githubusercontent.com/AlanZhangQ/Alan_cocoaSocket/master/ScreenShot/CocoaAsyncSoket_1.png)
 
 TCP开发使用的文件
 
@@ -40,6 +40,7 @@ TCP开发使用的文件
 1.继承GCDAsyncSocketDelegate协议.
 
 @interface ChatHandler ()<GCDAsyncSocketDelegate>
+    
 2.初始化聊天Handler单例，并将其设置成接收TCP信息的代理。
 
 #pragma mark - 初始化聊天handler单例
@@ -205,11 +206,11 @@ TCP开发使用的文件
 
 1.文字消息，这里不用多说，主要涉及到图文混排(可以看Github:https://github.com/AlanZhangQ/CoreTextLabel.git)，实现效果如图：
 
-
+![Alan_CocoaSocket](https://raw.githubusercontent.com/AlanZhangQ/Alan_cocoaSocket/master/ScreenShot/textMessage.png)
 
 2.语音消息，主要是分为录音，转换格式(由PCM格式等转为MP3格式)，播放。实现效果如下：
 
-
+![Alan_CocoaSocket](https://raw.githubusercontent.com/AlanZhangQ/Alan_cocoaSocket/master/ScreenShot/voice.gif)
 
 录音的主要代码:
 ```
@@ -359,7 +360,7 @@ TCP开发使用的文件
 ```
 3.图片和视频消息，主要是通过阿里巴巴的TZImagerPicker框架实现存取，实现效果如下：
 
-
+![Alan_CocoaSocket](https://raw.githubusercontent.com/AlanZhangQ/Alan_cocoaSocket/master/ScreenShot/picture_Video.gif)
 
 五.IM整体逻辑和问题的梳理
 
