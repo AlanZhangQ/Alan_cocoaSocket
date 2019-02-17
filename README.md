@@ -21,7 +21,7 @@ CocoaAsyncSocket中主要包含两个类:
 ```
 二.下载CocoaAsyncSocket
 
-首先,需要到这里下载CocoaAsyncSocket.
+首先,需要到https://github.com/robbiehanson/CocoaAsyncSocket下载CocoaAsyncSocket.
 
 下载后可以看到文件所在位置.
 
