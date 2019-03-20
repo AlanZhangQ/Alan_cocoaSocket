@@ -3,7 +3,8 @@
 
 Github地址：https://github.com/AlanZhangQ/Alan_cocoaSocket.git，如果有用，请点star.
 
-之前做的项目有IM部分，在考虑了环信和融云等已经比较通用的IMSDK，发现它们自定义程度不是很符合我们，想要自由约束，就需要自己定义一份网络协议，在CSDN，CocoaChina等网站收集整理信息后，决定使用CocoaAsyncSocket搭建IM。
+之前做的项目有IM部分，在考虑了环信和融云等已经比较通用的IMSDK，发现它们自定义程度不是很符合我们，想要自由约束，就需要自己定义一份网络协议，在CSDN，CocoaChina等网站收集整理信息后，决定使用CocoaAsyncSocket搭建IM。话不多说，先看效果(包括发送文字，表情，语音，图片，视频，还可以拍照，录制视频，撤回，删除消息等)。
+![Alan_CocoaSocket](https://raw.githubusercontent.com/AlanZhangQ/Alan_cocoaSocket/master/ScreenShot/overall%20effect.gif)
 
 一.CocoaAsyncSocket介绍
 
@@ -426,7 +427,7 @@ ChatHandler单例为全局的，并且生命周期为整个app运行期间不会
 
 直接调用咱们封装好的ChatHandler的sendMessage方法即可 ， 发送消息时 ，需要存入或者更新chatlist和chatinfo两张表。若是未连接或者发送超时 ，需要重新更新数据库存储的发送成功与否状态 ，同时更新内存数据源 ，刷新该条消息展示即可。 
 若是表情消息 ，传输过程也是以文本的方式传输 ，比如一个大笑的表情 ，可以定义为[大笑] ，当然规则自己可以和安卓端web端协商，本地根据plist文件和表情包匹配进行图文混排展示即可 。 
-https://github.com/coderMyy/MYCoreTextLabel ，图文混排地址 ， 如果觉得有用 ， 请star一下 ，好人一生平安
+https://github.com/AlanZhangQ/CoreTextLabel.git ，图文混排地址 ， 如果觉得有用 ， 请star一下 ，好人一生平安
 
 2. 语音消息
 
