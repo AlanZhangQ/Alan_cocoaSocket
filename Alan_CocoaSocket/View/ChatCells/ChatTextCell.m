@@ -236,11 +236,101 @@
     NSLog(@"----------点击了-------%@",clickString);
 }
 
+- (BOOL)canBecomeFirstResponder
+{
+    return YES;
+}
+
+- (BOOL)canPerformAction:(SEL)action withSender:(nullable id)sender
+{
+    if (action == @selector(messageBack)||action == @selector(messageDelete)||action == @selector(messageTransmit)||action == @selector(copyMessage:)) {
+        return YES;
+    }
+    return NO;
+}
+
 
 #pragma mark - 消息长按
 - (void)longpressHandle
 {
-    
+    UIMenuController *menuController = [UIMenuController sharedMenuController];
+    if (menuController.isMenuVisible) return;
+    [self becomeFirstResponder];
+    [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(tableViewDidScroll) name:@"chatUIDidScroll" object:nil];
+    UIMenuItem *item1 = [[UIMenuItem alloc]initWithTitle:@"撤回" action:@selector(messageBack)];
+    UIMenuItem *item2 = [[UIMenuItem alloc]initWithTitle:@"删除" action:@selector(messageDelete)];
+    UIMenuItem *item3 = [[UIMenuItem alloc]initWithTitle:@"转发" action:@selector(messageTransmit)];
+     UIMenuItem *item4 = [[UIMenuItem alloc]initWithTitle:@"复制" action:@selector(copyMessage:)];
+    NSTimeInterval timeinterval = [[NSDate date] timeIntervalSince1970] *1000;
+    long long int duration      = timeinterval - self.textModel.sendTime.longLongValue;
+    NSLog(@"backButton=%f, %f",self.backButton.width,self.backButton.height)
+    if (self.textModel.byMyself.integerValue && duration/1000.0 < 120 && !self.textModel.isSending.integerValue) {
+        menuController.menuItems = @[item1,item2,item3,item4];
+        [menuController setTargetRect:CGRectMake(0, 0, self.backButton.width, self.backButton.height) inView:self.backButton];
+        [menuController setMenuVisible:YES animated:YES];
+        return;
+    }else if (!self.textModel.isSending.integerValue){
+        menuController.menuItems = @[item2,item3,item4];
+        [menuController setTargetRect:CGRectMake(0, 0, self.backButton.width, self.backButton.height) inView:self.backButton];
+        [menuController setMenuVisible:YES animated:YES];
+        return;
+    }else if(self.textModel.isSending.integerValue){
+        menuController.menuItems = @[item1,item4];
+        [menuController setTargetRect:CGRectMake(0, 0, self.backButton.width, self.backButton.height) inView:self.backButton];
+        [menuController setMenuVisible:YES animated:YES];
+        return;
+    }
+}
+
+#pragma mark - 消息撤回
+- (void)messageBack
+{
+    if (self.longpressBlock) {
+        self.longpressBlock(LongpressSelectHandleTypeBack,self.textModel);
+    }
+    [self handleMenuOver];
+}
+
+#pragma mark - 删除消息
+- (void)messageDelete
+{
+    if (self.longpressBlock) {
+        self.longpressBlock(LongpressSelectHandleTypeDelete,self.textModel);
+    }
+    [self handleMenuOver];
+}
+
+#pragma mark - 拷贝
+- (void)copyMessage:(id)sender
+{
+    UIPasteboard *pasteboard = [UIPasteboard generalPasteboard];
+    pasteboard.string = self.textModel.content.text;
+    [self handleMenuOver];
+}
+
+#pragma mark - 消息转发
+- (void)messageTransmit
+{
+    if (self.longpressBlock) {
+        self.longpressBlock(LongpressSelectHandleTypeTransmit,self.textModel);
+    }
+    [self handleMenuOver];
+}
+
+
+#pragma mark - 操作条结束处理
+- (void)handleMenuOver
+{
+    UIMenuController *menuController = [UIMenuController sharedMenuController];
+    [menuController setMenuVisible:NO animated:YES];
+    [self resignFirstResponder];
+    [[NSNotificationCenter defaultCenter]removeObserver:self name:@"chatUIDidScroll" object:nil];
+}
+
+#pragma mark - 滚动处理
+- (void)tableViewDidScroll
+{
+    [self handleMenuOver];
 }
 
 #pragma mark - 进入个人资料详情

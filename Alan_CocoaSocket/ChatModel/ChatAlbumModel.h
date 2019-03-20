@@ -32,4 +32,6 @@
 //视频 , 语音时长
 @property (nonatomic, copy) NSString *duration;
 
+@property (nonatomic, copy) NSString *videoPath;
+
 @end

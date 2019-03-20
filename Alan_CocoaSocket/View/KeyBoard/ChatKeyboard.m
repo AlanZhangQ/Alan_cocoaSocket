@@ -13,6 +13,7 @@
 #import "ChatAlbumModel.h"
 #import "ChatModel.h"
 #import "ChatUtil.h"
+#import "ImagePickerManager.h"
 
 @interface ChatHandleButton : UIButton
 @end
@@ -39,7 +40,7 @@ static const CGFloat defaultInputHeight     = 35; //默认输入框 35
 @property (nonatomic, copy) ChatPictureMessageSendBlock pictureCallback;
 @property (nonatomic, copy) ChatVideoMessageSendBlock videoCallback;
 @property (nonatomic, strong) id target;
-
+@property (nonatomic, copy) NSString *toID;
 //表情键盘
 @property (nonatomic, strong) UIView *facesKeyboard;
 //按钮 (拍照,视频,相册)
@@ -199,9 +200,9 @@ static const CGFloat defaultInputHeight     = 35; //默认输入框 35
     if (!_handleKeyboard) {
         _handleKeyboard = [[UIView alloc]init];
         _handleKeyboard.backgroundColor = UIMainWhiteColor;
-        NSArray *buttonNames = @[@"照片",@"拍摄",@"视频"];
-        for (NSInteger index = 0; index < 3; index ++) {
-            NSInteger  colum = index % 3;
+        NSArray *buttonNames = @[@"照片",@"拍摄",@"视频",@"录制"];
+        for (NSInteger index = 0; index < 4; index ++) {
+            NSInteger  colum = index % 4;
             ChatHandleButton *handleButton = [ChatHandleButton buttonWithType:UIButtonTypeCustom];
             handleButton.titleLabel.font = FontSet(12);
             handleButton.tag = 9999 + index;
@@ -373,6 +374,10 @@ static const CGFloat defaultInputHeight     = 35; //默认输入框 35
     [self reloadSwitchButtons];
     //获取系统键盘高度
     CGFloat systemKbHeight  = [note.userInfo[@"UIKeyboardBoundsUserInfoKey"]CGRectValue].size.height;
+    //键盘加输入框高度
+    CGFloat height = SCREEN_HEIGHT - systemKbHeight - self.messageBar.bounds.size.height;
+    NSNotification *postNote = [[NSNotification alloc]initWithName:@"ChatBackViewShouldScroll" object:nil userInfo:@{@"keyboardMinY":@(height),@"type":@"show"}];
+    [[NSNotificationCenter defaultCenter]postNotification:postNote];  //处理背景拉高
     //记录系统键盘高度
     keyboardHeight = systemKbHeight;
     //将自定义键盘跟随位移
@@ -429,6 +434,9 @@ static const CGFloat defaultInputHeight     = 35; //默认输入框 35
         _msgTextView.hidden = NO;
         _audioLpButton.hidden  = YES;
         [_msgTextView resignFirstResponder];
+        CGFloat height = SCREEN_HEIGHT - keyboardHeight - Height(self.messageBar.frame);
+        NSNotification *postNote = [[NSNotification alloc]initWithName:@"ChatBackViewShouldScroll" object:nil userInfo:@{@"keyboardMinY":@(height),@"type":@"show"}];
+        [[NSNotificationCenter defaultCenter]postNotification:postNote]; //处理背景拉高
         //展示表情键盘
         [self.keyBoardContainer bringSubviewToFront:self.facesKeyboard];
         //自定义键盘位移
@@ -451,6 +459,9 @@ static const CGFloat defaultInputHeight     = 35; //默认输入框 35
         _msgTextView.hidden = NO;
         _audioLpButton.hidden = YES;
         [_msgTextView resignFirstResponder];
+        CGFloat height = SCREEN_HEIGHT - keyboardHeight - Height(self.messageBar.frame);
+        NSNotification *postNote = [[NSNotification alloc]initWithName:@"ChatBackViewShouldScroll" object:nil userInfo:@{@"keyboardMinY":@(height),@"type":@"show"}];
+        [[NSNotificationCenter defaultCenter]postNotification:postNote]; //处理背景拉高
         //展示操作键盘
         [self.keyBoardContainer bringSubviewToFront:self.handleKeyboard];
         //自定义键盘位移
@@ -471,6 +482,9 @@ static const CGFloat defaultInputHeight     = 35; //默认输入框 35
         [_msgTextView resignFirstResponder];
         self.msgTextView.hidden = YES;
         self.audioLpButton.hidden = NO;
+        CGFloat height = SCREEN_HEIGHT - defaultMsgBarHeight;
+        NSNotification *postNote = [[NSNotification alloc]initWithName:@"ChatBackViewShouldScroll" object:nil userInfo:@{@"keyboardMinY":@(height),@"type":@"show"}];
+        [[NSNotificationCenter defaultCenter]postNotification:postNote];  //处理背景拉高
         [self customKeyboardMove:SCREEN_HEIGHT - defaultMsgBarHeight]; //默认高度 输入栏 49
     }else{
         self.msgTextView.hidden = NO;
@@ -561,6 +575,47 @@ static const CGFloat defaultInputHeight     = 35; //默认输入框 35
             break;
         case 1:
         {
+            NSMutableArray *photoMessageModels = [NSMutableArray array];
+            [[ImagePickerManager shareInstance]presentPicker:PickerType_Camera target:self.target callBackBlock:^(NSDictionary *infoDict, BOOL isCancel, JYUpLoadTaskModel *taskModel) {
+                
+                if (!taskModel) return ;
+                
+                NSString *imageName = [[@(arc4random_uniform(999999)*arc4random_uniform(999999))stringValue]stringByAppendingString:@".jpg"];
+                
+                UIImage *image = [UIImage imageWithData:taskModel.sourceData];
+                
+                NSData *small = UIImageJPEGRepresentation(image, 0.1);
+                //缩略图写入本地
+                NSString *smallPath = [ChatCache_Path stringByAppendingPathComponent:self.toID];
+                [small writeToFile:[smallPath stringByAppendingPathComponent:[NSString stringWithFormat:@"small_%@",imageName]] atomically:YES];
+                
+                //原图写入本地
+                NSData *orgnal = taskModel.sourceData;
+                
+                //压缩图片
+                //============================
+                UIImage *newImage = [UIImage imageWithData:orgnal];
+                NSData *smallData = UIImageJPEGRepresentation(newImage, 0.1);
+                //============================
+                
+                NSString *path = [ChatCache_Path stringByAppendingPathComponent:self.toID];
+                [smallData writeToFile:[path stringByAppendingPathComponent:imageName] atomically:YES];
+                
+                ChatAlbumModel *messageModel = [[ChatAlbumModel alloc]init];
+                messageModel.orignalPicData = orgnal;
+                messageModel.normalPicData = smallData;
+                messageModel.size = [@(smallData.length)stringValue];
+                messageModel.name = imageName;
+                
+                //处理
+                messageModel.picSize = CGSizeMake(image.size.width, image.size.height);
+                [photoMessageModels addObject:messageModel];
+                
+                //回调
+                if (self.pictureCallback) {
+                    self.pictureCallback(photoMessageModels);
+                }
+            }];
             NSLog(@"-------------点击了拍照");
         }
             break;
@@ -572,6 +627,33 @@ static const CGFloat defaultInputHeight     = 35; //默认输入框 35
                 }
             } target:_target];
             NSLog(@"-------------点击了视频相册");
+        }
+            break;
+        case 3:
+        {
+            [[ImagePickerManager shareInstance]presentPicker:PickerType_Video target:self.target callBackBlock:^(NSDictionary *infoDict, BOOL isCancel, JYUpLoadTaskModel *taskModel) {
+                
+                if (!taskModel) return ;
+                   
+                UIImage *image = [UIImage videoFramerateWithPath:taskModel.videoPath];
+                
+                NSData *smallData = UIImageJPEGRepresentation(image, 0.1);
+                
+                ChatAlbumModel *messageModel = [[ChatAlbumModel alloc]init];
+                messageModel.normalPicData = smallData;
+                messageModel.size = [@(smallData.length)stringValue];
+                messageModel.name = taskModel.fileName;
+                messageModel.videoPath = taskModel.videoPath;
+                messageModel.videoCoverImg = image;
+                messageModel.picSize = CGSizeMake(image.size.width, image.size.height);
+                messageModel.duration = taskModel.duration;
+                
+                //回调
+                if (self.videoCallback) {
+                    _videoCallback(messageModel);
+                }
+            }];
+            NSLog(@"-------------点击了录制");
         }
             break;
         default:
@@ -690,6 +772,21 @@ static const CGFloat defaultInputHeight     = 35; //默认输入框 35
     [self.msgTextView resignFirstResponder];
     //按钮初始化刷新
     [self reloadSwitchButtons];
+    [[NSNotificationCenter defaultCenter]postNotificationName:@"ChatBackViewShouldScroll" object:nil];
     [self customKeyboardMove:SCREEN_HEIGHT - Height(self.messageBar.frame)];
+}
+
+//配置聊天信息
+- (void)configSendModel:(ChatModel *)configModel target:(UIViewController *)target
+{
+//    _configModel = configModel;
+//    _target = target;
+//    if (configModel.chatSytle == UIStylePerson) {
+//        _chatType = @"userChat";
+        _toID     = configModel.toUserID;
+//    }else{
+////        _chatType = @"familyChat";
+//        _toID     = configModel.familyID;
+//    }
 }
 @end

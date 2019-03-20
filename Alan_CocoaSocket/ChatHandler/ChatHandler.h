@@ -55,4 +55,7 @@
 //发送视频消息
 - (void)sendVideoMessage:(ChatModel *)videoModel;
 
+//发送撤回消息
+- (void)sendRepealMessage:(ChatModel *)textModel;
+
 @end

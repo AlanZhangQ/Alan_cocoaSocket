@@ -24,7 +24,11 @@ typedef void(^ChatVideoMessageSendBlock)(ChatAlbumModel *videoModel);
 
 //仅声明,消除警告
 - (void)systemKeyboardWillShow:(NSNotification *)note;
+- (void)keyboardResignFirstResponder:(NSNotification *)note;
 //发送消息回调
 - (void)textCallback:(ChatTextMessageSendBlock)textCallback audioCallback:(ChatAudioMesssageSendBlock)audioCallback picCallback:(ChatPictureMessageSendBlock)picCallback videoCallback:(ChatVideoMessageSendBlock)videoCallback target:(id)target ;
+
+//配置聊天信息
+- (void)configSendModel:(ChatModel *)configModel target:(UIViewController *)target;
 
 @end

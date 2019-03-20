@@ -9,8 +9,14 @@
 #import "ChatVideoCell.h"
 #import "ChatModel.h"
 #import "ChatUtil.h"
+#import "AccountTool.h"
 
 @interface ChatVideoCell ()
+
+{
+    NSTimer *timer;
+    NSInteger a;
+}
 
 //头像
 @property (strong, nonatomic)  UIImageView *iconView;
@@ -67,6 +73,7 @@
 {
     if (!_coverView) {
         _coverView = [[UIImageView alloc]init];
+        _coverView.userInteractionEnabled = YES;
     }
     return _coverView;
 }
@@ -134,6 +141,7 @@
         _sizeLabel.textColor = UIMainWhiteColor;
         _sizeLabel.textAlignment = NSTextAlignmentLeft;
         _sizeLabel.numberOfLines = 1;
+        _sizeLabel.userInteractionEnabled = YES;
     }
     return _sizeLabel;
 }
@@ -176,6 +184,8 @@
     if (!_playImageView) {
         _playImageView = [[UIImageView alloc]init];
         _playImageView.image = LoadImage(@"视频icon");
+        UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(downLoadVideo)];
+        [_playImageView addGestureRecognizer:tap];
         
     }
     return _playImageView;
@@ -188,6 +198,7 @@
     if (self = [super initWithStyle:style reuseIdentifier:reuseIdentifier]) {
         
         self.backgroundColor = UIMainBackColor;
+        self.userInteractionEnabled = YES;
         [self.contentView addSubview:self.timeContainer];
         [self.contentView addSubview:self.iconView];
         [self.contentView addSubview:self.picView];
@@ -225,6 +236,8 @@
     
     [self setFrames:videoModel];
     
+    [self showProgress];
+    
 }
 
 - (void)setContent:(ChatModel *)videoModel
@@ -242,7 +255,8 @@
     NSString *progressText = [[NSString stringWithFormat:@"%li",(NSInteger)(progress *100)]stringByAppendingString:@"%"];
     self.progressLabel.text = progressText;   //进度
     self.sizeLabel.text = videoSize;   //视频大小
-    self.secondsLabel.text = [ChatUtil videoDurationWithSeconds:duration.longLongValue];
+//    self.secondsLabel.text = [ChatUtil videoDurationWithSeconds:duration.longLongValue];
+    self.secondsLabel.text = duration;
     self.nickNameLabel.text   = videoModel.nickName; //昵称
     //拉伸遮罩
     UIImage *rightHeightCoverImage = LoadImage(@"右－竖图片遮罩");
@@ -267,7 +281,9 @@
         
         [self.iconView downloadImage:[AccountTool account].portrait placeholder:@"userhead"];
         //从本地读取
-        NSString *path = [[ChatCache_Path stringByAppendingPathComponent:videoModel.toUserID]stringByAppendingPathComponent:@"ChatCache"];
+        //Alan change
+//        NSString *path = [[ChatCache_Path stringByAppendingPathComponent:videoModel.toUserID]stringByAppendingPathComponent:@"ChatCache"];
+        NSString *path = [ChatCache_Path stringByAppendingPathComponent:videoModel.toUserID];
         NSString *picturePath = [path stringByAppendingPathComponent:[NSString stringWithFormat:@"%@_cover.jpg",videoModel.content.fileName]];
         NSData *imageData = [NSData dataWithContentsOfURL:[NSURL fileURLWithPath:picturePath]];
         UIImage *picImage = [UIImage imageWithData:imageData];
@@ -460,6 +476,62 @@
     }
 }
 
+- (BOOL)canBecomeFirstResponder
+{
+    return YES;
+}
+
+- (BOOL)canPerformAction:(SEL)action withSender:(nullable id)sender
+{
+    if (action == @selector(messageBack)||action == @selector(messageDelete)||action == @selector(messageTransmit)) {
+        return YES;
+    }
+    return NO;
+}
+
+#pragma mark - 消息撤回
+- (void)messageBack
+{
+    if (self.longpressBlock) {
+        self.longpressBlock(LongpressSelectHandleTypeBack,self.videoModel);
+    }
+    [self handleMenuOver];
+}
+
+#pragma mark - 删除消息
+- (void)messageDelete
+{
+    if (self.longpressBlock) {
+        self.longpressBlock(LongpressSelectHandleTypeDelete,self.videoModel);
+    }
+    [self handleMenuOver];
+}
+
+#pragma mark - 消息转发
+- (void)messageTransmit
+{
+    if (self.longpressBlock) {
+        self.longpressBlock(LongpressSelectHandleTypeTransmit,self.videoModel);
+    }
+    [self handleMenuOver];
+}
+
+
+#pragma mark - 操作条结束处理
+- (void)handleMenuOver
+{
+    UIMenuController *menuController = [UIMenuController sharedMenuController];
+    [menuController setMenuVisible:NO animated:YES];
+    [self resignFirstResponder];
+    [[NSNotificationCenter defaultCenter]removeObserver:self name:@"chatUIDidScroll" object:nil];
+}
+
+#pragma mark - 滚动处理
+- (void)tableViewDidScroll
+{
+    [self handleMenuOver];
+}
+
 
 #pragma mark - 头像长按
 - (void)iconLongPress:(UILongPressGestureRecognizer *)longpress
@@ -482,19 +554,97 @@
 #pragma mark - 图片长按
 - (void)longpressHandle
 {
+    UIMenuController *menuController = [UIMenuController sharedMenuController];
+    if (menuController.isMenuVisible) return;
+    [self becomeFirstResponder];
+    [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(tableViewDidScroll) name:@"chatUIDidScroll" object:nil];
+    UIMenuItem *item1 = [[UIMenuItem alloc]initWithTitle:@"撤回" action:@selector(messageBack)];
+    UIMenuItem *item2 = [[UIMenuItem alloc]initWithTitle:@"删除" action:@selector(messageDelete)];
+    UIMenuItem *item3 = [[UIMenuItem alloc]initWithTitle:@"转发" action:@selector(messageTransmit)];
+    //计算时间,判断状态
+    NSTimeInterval timeinterval   = [[NSDate date] timeIntervalSince1970] *1000;
+    long long int duration        = timeinterval - self.videoModel.sendTime.longLongValue;
     
+    if (self.videoModel.byMyself.integerValue && duration/1000.0 < 120 && !self.videoModel.isSending.integerValue) {
+        menuController.menuItems = @[item1,item2,item3];
+        [menuController setTargetRect:CGRectMake(0, 0, self.coverView.width, self.coverView.height) inView:self.coverView];
+        [menuController setMenuVisible:YES animated:YES];
+        return;
+    }else if (!self.videoModel.isSending.integerValue){
+        menuController.menuItems = @[item2,item3];
+        [menuController setTargetRect:CGRectMake(0, 0, self.coverView.width, self.coverView.height) inView:self.coverView];
+        [menuController setMenuVisible:YES animated:YES];
+        return;
+    }else if (self.videoModel.isSending.integerValue){
+        menuController.menuItems = @[item1];
+        [menuController setTargetRect:CGRectMake(0, 0, self.coverView.width, self.coverView.height) inView:self.coverView];
+        [menuController setMenuVisible:YES animated:YES];
+        return;
+    }
 }
 
 #pragma mark - 下载视频在线播放
 - (void)downLoadVideo
 {
+    //正在下载中或刚加载上界面,不允许点击
+    if (!self.progressLabel.hidden) return;
     
+    NSString *videoPath = nil;  //视频存储地址
+//    NSString *downloadNeedCachePath = nil; //需要下载到的位置
+    NSString *lastDirName = nil; //最后一个文件夹名称
+    //=============================单聊
+    if (self.videoModel.fromUserID.length) {
+        
+        //自己发的 ,本地已经存在
+        if ([self.videoModel.fromUserID isEqualToString:[AccountTool account].myUserID]) {
+            lastDirName = self.videoModel.toUserID;
+            //别人发的 需要下载,也可能已经下载完毕
+        }else{
+            lastDirName = self.videoModel.fromUserID;
+        }
+        
+        //=============================群聊
+    }else{
+//        lastDirName = self.videoModel.toFamily; //如果是自己发的就存在 , 别人发的需要下载,也可能已经存在(已经下载过)
+    }
+    videoPath = [ChatCache_Path stringByAppendingPathComponent:[NSString stringWithFormat:@"%@%@",lastDirName,self.videoModel.content.fileName]]; //自己发的,已经缓存到本地的
+    
+    //判断本地是否存在
+    NSFileManager *fileManager = [NSFileManager defaultManager];
+    if ([fileManager fileExistsAtPath:videoPath]) {
+        //进入播放页面
+        if (self.playBlock) {
+            self.playBlock(videoPath);
+        }
+        return; //return
+    }
 }
 
 #pragma mark - 重新发送
 - (void)sendAgain
 {
     
+}
+
+#pragma mark - 虚拟进度
+
+-(void)showProgress;
+{
+    a = 0;
+    timer =[NSTimer scheduledTimerWithTimeInterval:0.05 target:self selector:@selector(runProgress:) userInfo:nil repeats:YES];
+    [timer fire];
+}
+
+-(void)runProgress:(id)sender
+{
+    if (a>100) {
+        [timer invalidate];
+        self.progressLabel.hidden = YES;
+        self.playImageView.hidden = NO;
+    }else{
+        self.progressLabel.text = [[NSString stringWithFormat:@"%li",a]stringByAppendingString:@"%"];
+        a++;
+    }
 }
 
 @end

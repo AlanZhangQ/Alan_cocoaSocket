@@ -266,6 +266,94 @@
     }
 }
 
+#pragma mark - 长按操作
+- (void)longpressHandle
+{
+    UIMenuController *menuController = [UIMenuController sharedMenuController];
+    if (menuController.isMenuVisible) return;
+    [self becomeFirstResponder];
+    [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(tableViewDidScroll) name:@"chatUIDidScroll" object:nil];
+    UIMenuItem *item1 = [[UIMenuItem alloc]initWithTitle:@"撤回" action:@selector(messageBack)];
+    UIMenuItem *item2 = [[UIMenuItem alloc]initWithTitle:@"删除" action:@selector(messageDelete)];
+    UIMenuItem *item3 = [[UIMenuItem alloc]initWithTitle:@"转发" action:@selector(messageTransmit)];
+    //计算时间,判断状态
+    NSTimeInterval timeinterval   = [[NSDate date] timeIntervalSince1970] *1000;
+    long long int duration        = timeinterval - self.imageModel.sendTime.longLongValue;
+    
+    if (self.imageModel.byMyself.integerValue && duration/1000.0 < 120 && !self.imageModel.isSending.integerValue) {
+        menuController.menuItems = @[item1,item2,item3];
+        [menuController setTargetRect:CGRectMake(0, 0, self.coverView.width, self.coverView.height) inView:self.coverView];
+        [menuController setMenuVisible:YES animated:YES];
+        return;
+    }else if (!self.imageModel.isSending.integerValue){
+        menuController.menuItems = @[item2,item3];
+        [menuController setTargetRect:CGRectMake(0, 0, self.coverView.width, self.coverView.height) inView:self.coverView];
+        [menuController setMenuVisible:YES animated:YES];
+        return;
+    }else if (self.imageModel.isSending.integerValue){
+        menuController.menuItems = @[item2];
+        [menuController setTargetRect:CGRectMake(0, 0, self.coverView.width, self.coverView.height) inView:self.coverView];
+        [menuController setMenuVisible:YES animated:YES];
+        return;
+    }
+}
+
+- (BOOL)canBecomeFirstResponder
+{
+    return YES;
+}
+
+- (BOOL)canPerformAction:(SEL)action withSender:(nullable id)sender
+{
+    if (action == @selector(messageBack)||action == @selector(messageDelete)||action == @selector(messageTransmit)) {
+        return YES;
+    }
+    return NO;
+}
+
+#pragma mark - 消息撤回
+- (void)messageBack
+{
+    if (self.longpressBlock) {
+        self.longpressBlock(LongpressSelectHandleTypeBack,self.imageModel);
+    }
+    [self handleMenuOver];
+}
+
+#pragma mark - 删除消息
+- (void)messageDelete
+{
+    [[NSNotificationCenter defaultCenter]postNotificationName:@"chatUIAllowRefresh" object:nil];
+    if (self.longpressBlock) {
+        self.longpressBlock(LongpressSelectHandleTypeDelete,self.imageModel);
+    }
+    [self handleMenuOver];
+}
+
+#pragma mark - 消息转发
+- (void)messageTransmit
+{
+    if (self.longpressBlock) {
+        self.longpressBlock(LongpressSelectHandleTypeTransmit,self.imageModel);
+    }
+    [self handleMenuOver];
+}
+
+#pragma mark - 操作条结束处理
+- (void)handleMenuOver
+{
+    UIMenuController *menuController = [UIMenuController sharedMenuController];
+    [menuController setMenuVisible:NO animated:YES];
+    [self resignFirstResponder];
+    [[NSNotificationCenter defaultCenter]removeObserver:self name:@"chatUIDidScroll" object:nil];
+}
+
+#pragma mark - 滚动处理
+- (void)tableViewDidScroll
+{
+    [self handleMenuOver];
+}
+
 #pragma mark - 头像长按
 - (void)iconLongPress:(UILongPressGestureRecognizer *)longpress
 {
@@ -281,14 +369,18 @@
 #pragma mark - 进入大图查看
 - (void)toBigPicture
 {
-    
+    [self handleMenuOver];
+    if (self.bigPicBlock) {
+        [[NSNotificationCenter defaultCenter] postNotificationName:ChatKeyboardResign object:nil];
+        self.bigPicBlock(self.imageModel,self.picView);
+    }
 }
 
 #pragma mark - 图片长按
-- (void)longpressHandle
-{
-    
-}
+//- (void)longpressHandle
+//{
+//
+//}
 
 #pragma mark - 重新发送
 - (void)sendAgain

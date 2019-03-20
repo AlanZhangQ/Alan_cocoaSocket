@@ -33,7 +33,7 @@
 //播放回调
 @property (nonatomic, copy) playAudioCallback playCallback;
 //长按回调
-@property (nonatomic, copy) longpressCallback longpressCallback;
+@property (nonatomic, copy) longpressHandle longpressCallback;
 //用户详情回调
 @property (nonatomic, copy) userInfoCallback userInfoCallback;
 //重新发送回调
@@ -333,13 +333,94 @@
 }
 
 #pragma mark - 回调
-- (void)sendAgain:(sendAgainCallback)sendAgain playAudio:(playAudioCallback)playAudio longpress:(longpressCallback)longpress toUserInfo:(userInfoCallback)userDetailCallback
+- (void)sendAgain:(sendAgainCallback)sendAgain playAudio:(playAudioCallback)playAudio longpress:(longpressHandle)longpress toUserInfo:(userInfoCallback)userDetailCallback
 {
     _sendAgainCallback = sendAgain;
     _playCallback          = playAudio;
     _longpressCallback  = longpress;
     _userInfoCallback    = userDetailCallback;
 }
+
+#pragma mark - 长按操作
+- (void)longpressHandle
+{
+    UIMenuController *menuController = [UIMenuController sharedMenuController];
+    if (menuController.isMenuVisible) return;
+    [self becomeFirstResponder];
+    [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(tableViewDidScroll) name:@"chatUIDidScroll" object:nil];
+    UIMenuItem *item1 = [[UIMenuItem alloc]initWithTitle:@"撤回" action:@selector(messageBack)];
+    UIMenuItem *item2 = [[UIMenuItem alloc]initWithTitle:@"删除" action:@selector(messageDelete)];
+    NSTimeInterval timeinterval = [[NSDate date] timeIntervalSince1970] *1000;
+    long long int duration      = timeinterval - self.audioModel.sendTime.longLongValue;
+    if (self.audioModel.byMyself.integerValue&&duration/1000.0 < 120 && !self.audioModel.isSending.integerValue) {
+        menuController.menuItems = @[item1,item2];
+        [menuController setTargetRect:CGRectMake(0, 0, self.backButton.width, self.backButton.height) inView:self.backButton];
+        [menuController setMenuVisible:YES animated:YES];
+        return;
+    }else{
+        
+        menuController.menuItems = @[item2];
+        [menuController setTargetRect:CGRectMake(0, 0, self.backButton.width, self.backButton.height) inView:self.backButton];
+        [menuController setMenuVisible:YES animated:YES];
+    }
+}
+
+- (BOOL)canBecomeFirstResponder
+{
+    return YES;
+}
+
+- (BOOL)canPerformAction:(SEL)action withSender:(nullable id)sender
+{
+    if (action == @selector(messageBack)||action == @selector(messageDelete)||action == @selector(messageTransmit)) {
+        return YES;
+    }
+    return NO;
+}
+
+#pragma mark - 消息撤回
+- (void)messageBack
+{
+    if (self.longpressCallback) {
+        self.longpressCallback(LongpressSelectHandleTypeBack,self.audioModel);
+    }
+    [self handleMenuOver];
+}
+
+#pragma mark - 删除消息
+- (void)messageDelete
+{
+    if (self.longpressCallback) {
+        self.longpressCallback(LongpressSelectHandleTypeDelete,self.audioModel);
+    }
+    [self handleMenuOver];
+}
+
+#pragma mark - 消息转发
+- (void)messageTransmit
+{
+    if (self.longpressCallback) {
+        self.longpressCallback(LongpressSelectHandleTypeTransmit,self.audioModel);
+    }
+    [self handleMenuOver];
+}
+
+
+#pragma mark - 操作条结束处理
+- (void)handleMenuOver
+{
+    UIMenuController *menuController = [UIMenuController sharedMenuController];
+    [menuController setMenuVisible:NO animated:YES];
+    [self resignFirstResponder];
+    [[NSNotificationCenter defaultCenter]removeObserver:self name:@"chatUIDidScroll" object:nil];
+}
+
+#pragma mark - 滚动处理
+- (void)tableViewDidScroll
+{
+    [self handleMenuOver];
+}
+
 
 
 #pragma mark - 重新发送
@@ -349,10 +430,10 @@
 }
 
 #pragma mark - 语音长按
-- (void)longpressHandle
-{
-    
-}
+//- (void)longpressHandle
+//{
+//
+//}
 
 #pragma mark - 进入用户详情
 - (void)toUserInfo

@@ -49,7 +49,7 @@
         height = height < 50 ? 50 : height;
         //验证是否群聊
         [self groupChatConfig:currentChatmodel];
-        return currentChatmodel.messageHeight += currentChatmodel.shouldShowTime ? height + 50 : height + 15;
+        return currentChatmodel.messageHeight += currentChatmodel.shouldShowTime ? height + 50 : height + 20;
         //语音
     }else if (hashEqual(currentChatmodel.contenType, Content_Audio)){
         
@@ -85,11 +85,42 @@
         //视频
     }else if (hashEqual(currentChatmodel.contenType, Content_Video)){
         
+        CGFloat picHeight = currentChatmodel.content.picSize.height;
+        CGFloat picWidth  = currentChatmodel.content.picSize.width;
+        //宽大于高
+        if (picWidth > picHeight) {
+            
+            //极宽极低固定50高
+            if (100*(picHeight/picWidth)<=50) {
+                height = 50;
+            }else{
+                height = 135 *(picHeight/picWidth);
+            }
+            //宽小于高
+        }else if (picWidth < picHeight){
+            
+            height = 130;
+            //宽高相等
+        }else{
+            height = 120;
+        }
+        //验证是否群聊
+        [self groupChatConfig:currentChatmodel];
         return currentChatmodel.messageHeight += currentChatmodel.shouldShowTime ? height + 50 : height + 15;
+        //视频
+//        height = 150;
+//        return currentChatmodel.messageHeight += currentChatmodel.shouldShowTime ? height + 50 : height + 15;
         //文件
     }else if (hashEqual(currentChatmodel.contenType, Content_File)){
         
         return currentChatmodel.messageHeight += currentChatmodel.shouldShowTime ? height + 50 : height + 15;
+        //撤回
+    }else if (hashEqual(currentChatmodel.contenType, Content_Repeal)) {
+        
+        return currentChatmodel.messageHeight += currentChatmodel.shouldShowTime ? height + 65 : height + 35;
+    }else if (hashEqual(currentChatmodel.contenType, Content_FirstRepeal)) {
+        
+        return currentChatmodel.messageHeight +=35;
         //提示语
     }else{
         
@@ -138,6 +169,24 @@
 {
     ChatModel *textModel = [self creatMessageModel:config];
     textModel.contenType  = Content_Text;
+    textModel.content.text  = text;
+    return textModel;
+}
+//初始化撤回消息模型
++ (ChatModel *)initRepealMessage:(NSString *)text config:(ChatModel *)config
+{
+    ChatModel *textModel = [self creatMessageModel:config];
+    textModel.contenType  = Content_Repeal;
+    textModel.content.text  = text;
+    return textModel;
+}
+
+//初始化第一条撤回消息模型
++ (ChatModel *)initFirstRepealMessage:(NSString *)text config:(ChatModel *)config
+{
+    ChatModel *textModel = [self creatMessageModel:config];
+    textModel.sendTime = config.sendTime;
+    textModel.contenType  = Content_FirstRepeal;
     textModel.content.text  = text;
     return textModel;
 }
@@ -247,21 +296,15 @@
 {
     PHAsset *asset = video.videoAsset;
     NSString *basePath = nil;
-    NSArray *assetResources = [PHAssetResource assetResourcesForAsset:asset];
-    PHAssetResource *resource;
-    
-    for (PHAssetResource *assetRes in assetResources) {
-        if (assetRes.type == PHAssetResourceTypePairedVideo ||
-            assetRes.type == PHAssetResourceTypeVideo) {
-            resource = assetRes;
-        }
-    }
+    NSString * toUserId = nil;
     if (hashEqual(config.chatType, @"userChat")) {
         basePath = [ChatCache_Path stringByAppendingPathComponent:config.toUserID];
+        toUserId = config.toUserID;
     }else{
         basePath = [ChatCache_Path stringByAppendingPathComponent:config.groupID];
+        toUserId = config.groupID;
     }
-    
+    NSLog(@"basePath=%@", basePath );
     NSFileManager *manager = [NSFileManager defaultManager];
     BOOL exist = [manager fileExistsAtPath:basePath];
     if (!exist) {
@@ -275,7 +318,36 @@
     videoModel.contenType  = Content_Video;
     videoModel.content.fileName = video.name;
     videoModel.content.picSize = video.videoCoverImg.size;
+    videoModel.content.text = [NSString stringWithFormat:@"%f%@%f%@%@",video.videoCoverImg.size.width,@"-",video.videoCoverImg.size.height,@"-",video.duration];
+    videoModel.fromUserID = @"19910805";
+    videoModel.toUserID = toUserId;
+    //Alan change strat
+    NSData *coverData = UIImageJPEGRepresentation(video.videoCoverImg, 0.1);
+//    //直接将缩略图写入本地
+    [coverData writeToFile:[basePath stringByAppendingPathComponent:[NSString stringWithFormat:@"%@_cover.jpg",video.name]] atomically:YES];
+    //Alan change end
     
+    if (video.videoPath) {
+        dispatch_async(dispatch_get_global_queue(0, 0), ^{
+        NSData *videoData = [NSData dataWithContentsOfURL:[NSURL fileURLWithPath:video.videoPath]];
+        long long int size = [[NSData dataWithContentsOfFile:video.videoPath]length];
+        videoModel.content.fileSize = [@(size)stringValue];
+        [videoData writeToFile:detailPath atomically:YES];
+            dispatch_async(dispatch_get_main_queue(), ^{
+                callback(videoModel);
+                NSLog(@"------------相册视频回调----------");
+            });
+        });
+    } else if (asset) {
+        NSArray *assetResources = [PHAssetResource assetResourcesForAsset:asset];
+        PHAssetResource *resource;
+        
+        for (PHAssetResource *assetRes in assetResources) {
+            if (assetRes.type == PHAssetResourceTypePairedVideo ||
+                assetRes.type == PHAssetResourceTypeVideo) {
+                resource = assetRes;
+            }
+        }
     //异步存储
     dispatch_async(dispatch_get_global_queue(0, 0), ^{
         
@@ -310,6 +382,7 @@
             });
         }
     });
+}
 }
 
 

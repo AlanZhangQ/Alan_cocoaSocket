@@ -68,7 +68,9 @@ typedef void(^albumAuthorizationCallBack)();
     //缩略图
     videoModel.videoCoverImg = cover;
     //视频时长
-    videoModel.duration = [@(asset.duration)stringValue];
+    NSString *timeLength = [NSString stringWithFormat:@"%0.0f",asset.duration];
+    timeLength = [self getNewTimeFromDurationSecond:timeLength.integerValue];
+    videoModel.duration = timeLength;
     //视频名称
     videoModel.name = fileName;
     
@@ -80,6 +82,23 @@ typedef void(^albumAuthorizationCallBack)();
     }
 }
 
++ (NSString *)getNewTimeFromDurationSecond:(NSInteger)duration {
+    NSString *newTime;
+    if (duration < 10) {
+        newTime = [NSString stringWithFormat:@"0:0%zd",duration];
+    } else if (duration < 60) {
+        newTime = [NSString stringWithFormat:@"0:%zd",duration];
+    } else {
+        NSInteger min = duration / 60;
+        NSInteger sec = duration - (min * 60);
+        if (sec < 10) {
+            newTime = [NSString stringWithFormat:@"%zd:0%zd",min,sec];
+        } else {
+            newTime = [NSString stringWithFormat:@"%zd:%zd",min,sec];
+        }
+    }
+    return newTime;
+}
 
 #pragma mark - 初始化
 + (TZImagePickerController *)initPickerWithtaget:(UIViewController *)target maxCount:(NSInteger)maxCount
@@ -253,6 +272,26 @@ typedef void(^albumAuthorizationCallBack)();
     };
 }
 
+// 视频第一帧
++ (UIImage *)videoFramerateWithPath:(NSString *)videoPath
+{
+    NSString *mp4Path = [[videoPath stringByDeletingPathExtension] stringByAppendingPathExtension:@"mp4"];
+    AVURLAsset *asset = [[AVURLAsset alloc] initWithURL:[NSURL fileURLWithPath:mp4Path] options:nil];
+    NSParameterAssert(asset);
+    AVAssetImageGenerator *assetImageGenerator = [[AVAssetImageGenerator alloc] initWithAsset:asset];
+    assetImageGenerator.appliesPreferredTrackTransform = YES;
+    assetImageGenerator.apertureMode = AVAssetImageGeneratorApertureModeEncodedPixels;
+    CGImageRef thumbnailImageRef = NULL;
+    CFTimeInterval thumbnailImageTime = 0;
+    NSError *thumbnailImageGenerationError = nil;
+    thumbnailImageRef = [assetImageGenerator copyCGImageAtTime:CMTimeMake(thumbnailImageTime, 60) actualTime:NULL error:&thumbnailImageGenerationError];
+    if (!thumbnailImageRef) {
+        return nil;
+    }
+    UIImage *thumbnailImage = thumbnailImageRef ? [[UIImage alloc] initWithCGImage:thumbnailImageRef] : nil;
+    CGImageRelease(thumbnailImageRef);
+    return thumbnailImage;
+}
 
 NS_INLINE NSString *getCurrentTime() {
     UInt64 recordTime = [[NSDate date] timeIntervalSince1970]*1000;

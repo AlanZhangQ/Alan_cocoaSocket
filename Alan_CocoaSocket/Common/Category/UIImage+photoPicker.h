@@ -31,4 +31,7 @@ typedef void(^videoBaseInfoCallback)(ChatAlbumModel *videoModel);
  */
 + (void)openPhotoPickerGetVideo:(videoBaseInfoCallback)callback target:(UIViewController *)target;
 
+// 视频第一帧
++ (UIImage *)videoFramerateWithPath:(NSString *)videoPath;
+
 @end

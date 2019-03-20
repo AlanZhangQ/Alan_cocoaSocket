@@ -24,9 +24,12 @@
     //开启网络监听
     [GLobalRealReachability startNotifier];
     
+    NSLog(@"sandbox=%@", NSHomeDirectory());
+    
     //测试数据
     [Account account].myUserID = @"19910805";
     [Account account].nickName = @"程芳菲同学";
+    [AccountTool save:[Account account]];
     return YES;
 }
 

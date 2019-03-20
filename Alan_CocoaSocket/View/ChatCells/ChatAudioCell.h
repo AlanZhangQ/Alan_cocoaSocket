@@ -15,7 +15,7 @@ typedef void(^sendAgainCallback)(ChatModel *audioModel);
 //播放语音回调
 typedef void(^playAudioCallback)(NSString *path);
 //消息长按操作回调
-typedef void(^longpressCallback)(LongpressSelectHandleType type,ChatModel *audioModel);
+typedef void(^longpressHandle)(LongpressSelectHandleType type,ChatModel *audioModel);
 //进入用户详情
 typedef void(^userInfoCallback)(NSString *userID);
 
@@ -23,7 +23,10 @@ typedef void(^userInfoCallback)(NSString *userID);
 
 @property (nonatomic, strong) ChatModel *audioModel;
 
-- (void)sendAgain:(sendAgainCallback)sendAgain playAudio:(playAudioCallback)playAudio longpress:(longpressCallback)longpress toUserInfo:(userInfoCallback)userDetailCallback;
+//长按操作类型
+//@property (nonatomic, copy) longpressHandle longpressBlock;
+
+- (void)sendAgain:(sendAgainCallback)sendAgain playAudio:(playAudioCallback)playAudio longpress:(longpressHandle)longpress toUserInfo:(userInfoCallback)userDetailCallback;
 
 
 @end

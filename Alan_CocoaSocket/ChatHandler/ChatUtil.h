@@ -17,6 +17,8 @@ typedef void(^videoModelCallback)(ChatModel *videoModel);
 + (CGFloat)heightForMessage:(ChatModel *)currentChatmodel premodel:(ChatModel *)premodel;
 //初始化文本消息模型
 + (ChatModel *)initTextMessage:(NSString *)text config:(ChatModel *)config;
+//初始化撤回消息模型
++ (ChatModel *)initRepealMessage:(NSString *)text config:(ChatModel *)config;
 //初始化语音消息模型
 + (ChatModel *)initAudioMessage:(ChatAlbumModel *)audio config:(ChatModel *)config;
 //初始化图片消息模型
@@ -27,5 +29,7 @@ typedef void(^videoModelCallback)(ChatModel *videoModel);
 + (NSString *)dataSize:(ChatModel *)chatModel;
 //时间戳转换时间格式
 + (NSString *)videoDurationWithSeconds:(long long int)duration;
+//初始化第一条撤回消息模型
++ (ChatModel *)initFirstRepealMessage:(NSString *)text config:(ChatModel *)config;
 
 @end

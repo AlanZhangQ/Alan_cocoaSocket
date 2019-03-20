@@ -18,8 +18,17 @@
 #import "ChatUtil.h"    //工具类
 #import "ChatAudioPlayTool.h" //语音播放器
 #import "ChatHandler.h"
+#import <AVKit/AVKit.h>
+#import "JYChatPhotoBrowser.h"
+#import "MYAnimationHelper.h"
+#import "ChatReaplCell.h"
+#import "ChatTimeCell.h"
 
 @interface ChatViewController ()<UITableViewDelegate,UITableViewDataSource,ChatHandlerDelegate>
+
+{
+    NSIndexPath *_longIndexPath;
+}
 
 //聊天列表
 @property (nonatomic, strong) UITableView *chatTableView;
@@ -41,6 +50,7 @@
 {
     if (!_customKeyboard) {
         _customKeyboard = [[ChatKeyboard alloc]init];
+        [_customKeyboard configSendModel:self.config target:self];
         //传入当前控制器 ，方便打开相册（如放到控制器 ， 后期的逻辑过多，控制器会更加臃肿）
         __weak typeof(self) weakself = self;
         //普通文本消息
@@ -100,6 +110,8 @@
         _chatTableView.allowsSelection = NO;
         _chatTableView.delegate     = self;
         _chatTableView.dataSource = self;
+        UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(addToucheEvent:)];
+        [_chatTableView addGestureRecognizer:tap];
         //普通文本,表情消息类型
         [_chatTableView registerClass:[ChatTextCell class] forCellReuseIdentifier:@"ChatTextCell"];
         //语音消息类型
@@ -112,6 +124,10 @@
         [_chatTableView registerClass:[ChatFileCell class] forCellReuseIdentifier:@"ChatFileCell"];
         //提示消息类型
         [_chatTableView registerClass:[ChatTipCell class] forCellReuseIdentifier:@"ChatTipCell"];
+        //撤回消息类型
+        [_chatTableView registerClass:[ChatReaplCell class] forCellReuseIdentifier:@"ChatReaplCell"];
+        //撤回消息类型
+        [_chatTableView registerClass:[ChatTimeCell class] forCellReuseIdentifier:@"ChatTimeCell"];
     }
     return _chatTableView;
 }
@@ -172,6 +188,65 @@
     [[NSNotificationCenter defaultCenter]addObserver:self.customKeyboard selector:@selector(systemKeyboardWillShow:) name:UIKeyboardWillShowNotification object:nil];
     //自定义键盘系统键盘降落
     [[NSNotificationCenter defaultCenter]addObserver:self.customKeyboard selector:@selector(keyboardResignFirstResponder:) name:ChatKeyboardResign object:nil];
+    //背景拉高通知
+    [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(backScroll:) name:@"ChatBackViewShouldScroll" object:nil];
+}
+
+#pragma mark -  键盘弹出,消失 背景变化
+- (void)backScroll:(NSNotification *)note
+{
+    NSIndexPath *indexPath = [NSIndexPath indexPathForRow:self.talkMessages.count -1 inSection:0];
+    //键盘最低高度
+    if ([note.userInfo[@"type"]isEqualToString:@"show"]) {
+        if (self.talkMessages.count) {
+            [self.chatTableView scrollToRowAtIndexPath:indexPath atScrollPosition:UITableViewScrollPositionBottom animated:NO];//滚动到最后一行
+        }
+        UITableViewCell *cell = [self.chatTableView cellForRowAtIndexPath:indexPath];
+        CGFloat keyboardMinY = [note.userInfo[@"keyboardMinY"]floatValue];
+        CGRect cellFrame = [self relativeFrameForScreenWithView:cell];
+        CGFloat cellMaxY = cellFrame.origin.y + cellFrame.size.height ;
+        CGRect tableviewFrame = self.chatTableView.frame;
+        
+        if (cellMaxY == keyboardMinY) { //相等情况
+            self.chatTableView.frame = tableviewFrame;
+            return;
+        }
+        
+        if (cellMaxY < keyboardMinY) {
+            if (tableviewFrame.origin.y < 0) {
+                [UIView animateWithDuration:0.25 animations:^{
+                    self.chatTableView.frame = JYFrame(tableviewFrame.origin.x, tableviewFrame.origin.y+(keyboardMinY - cellMaxY), tableviewFrame.size.width, tableviewFrame.size.height);
+                }];
+            } else if (tableviewFrame.origin.y == 0){
+                [UIView animateWithDuration:0.25 animations:^{
+                self.chatTableView.frame = JYFrame(tableviewFrame.origin.x, tableviewFrame.origin.y, tableviewFrame.size.width, keyboardMinY);
+            }];
+            }
+            return;
+        }
+        
+        tableviewFrame.origin.y += keyboardMinY - cellMaxY;
+        //需要拉高或降低
+        [UIView animateWithDuration:0.25 animations:^{
+            self.chatTableView.frame = tableviewFrame;
+        }];
+    }else{
+        [UIView animateWithDuration:0.25 animations:^{
+            self.chatTableView.frame = JYFrame(0, 0, JYScreen_Height, self.view.bounds.size.height -49);
+        }];
+    }
+}
+
+//计算相对frame
+- (CGRect)relativeFrameForScreenWithView:(UIView *)v
+{
+    UIWindow * window=[[[UIApplication sharedApplication] delegate] window];
+    return [v convertRect: v.bounds toView:window];
+}
+
+- (void)addToucheEvent:(UITapGestureRecognizer *)tap
+{
+    [[NSNotificationCenter defaultCenter] postNotificationName:ChatKeyboardResign object:nil];
 }
 
 #pragma mark - dataSource
@@ -189,6 +264,10 @@
     if (hashEqual(chatModel.contenType, Content_Text)) {
         
         ChatTextCell *textCell = [tableView dequeueReusableCellWithIdentifier:@"ChatTextCell"];
+        //消息操作
+        textCell.longpressBlock = ^(LongpressSelectHandleType type,ChatModel *messageModel){
+            [weakself messageHandle:type message:messageModel];
+        };
         textCell.textModel = chatModel;
         return textCell;
         
@@ -206,7 +285,7 @@
             [weakself playAudio:path];
             //长按操作
         } longpress:^(LongpressSelectHandleType type, ChatModel *audioModel) {
-            
+            [weakself messageHandle:type message:audioModel];
             //用户详情
         } toUserInfo:^(NSString *userID) {
             
@@ -218,12 +297,49 @@
         
         ChatImageCell *imageCell = [tableView dequeueReusableCellWithIdentifier:@"ChatImageCell"];
         imageCell.imageModel = chatModel;
+        
+        imageCell.longpressBlock = ^(LongpressSelectHandleType type,ChatModel *messageModel){
+            [weakself messageHandle:type message:messageModel];
+        };
+        
+        //大图回调
+        imageCell.bigPicBlock = ^(ChatModel *model,UIImageView *touchImageView){
+            
+            //获取当前所有图片的模型
+            NSMutableArray *tmpArr = [NSMutableArray array];
+            NSInteger currentIndex = 0;
+            for (NSInteger index = 0; index < weakself.talkMessages.count; index ++) {
+                
+                ChatModel *tmpMessage = weakself.talkMessages[index];
+                if (![tmpMessage.contenType isEqualToString:@"picture"]) continue;
+                [tmpArr addObject:tmpMessage];
+                if (tmpMessage == model) { //当前索引
+                    currentIndex = [tmpArr indexOfObject:tmpMessage];
+                }
+            }
+            JYChatPhotoBrowser *browser = [[JYChatPhotoBrowser alloc]initWithUrls:tmpArr imgView:touchImageView currentIndex:currentIndex];
+            [browser showWithAnimation:YES];
+        };
+        
         return imageCell;
         
         //视频消息
     }else if (hashEqual(chatModel.contenType, Content_Video)){
         
         ChatVideoCell *videoCell = [tableView dequeueReusableCellWithIdentifier:@"ChatVideoCell"];
+        videoCell.longpressBlock = ^(LongpressSelectHandleType type,ChatModel *messageModel) {
+            [weakself messageHandle:type message:messageModel];
+        };
+        //播放视频
+        videoCell.playBlock = ^(NSString *localPath){
+            
+            AVPlayerViewController *vc = [[AVPlayerViewController alloc]init];
+            AVPlayer *player = [AVPlayer playerWithURL:[NSURL fileURLWithPath:localPath]];
+            vc.player = player;
+            [self presentViewController:vc animated:YES completion:^{
+                [vc.player play];
+            }];
+        };
         videoCell.videoModel = chatModel;
         return videoCell;
         
@@ -234,6 +350,15 @@
         
         return fileCell;
         
+        //撤回消息
+    }else if (hashEqual(chatModel.contenType, Content_Repeal)){
+        ChatReaplCell *repealCell = [tableView dequeueReusableCellWithIdentifier:@"ChatReaplCell"];
+        repealCell.reaplModel = chatModel;
+        return repealCell;
+    } else if (hashEqual(chatModel.contenType, Content_FirstRepeal)){
+        ChatTimeCell *timeCell = [tableView dequeueReusableCellWithIdentifier:@"ChatTimeCell"];
+        timeCell.timeModel = chatModel;
+        return timeCell;
         //提示语消息
     }else{
         
@@ -309,13 +434,20 @@
 - (void)sendVideoMessage:(ChatAlbumModel *)videoModel
 {
     //视频消息基本信息配置
-//    [ChatUtil initVideoMessage:videoModel config:_config videoCallback:^(ChatModel *videoModel) {
-//        
-//        [self.talkMessages addObject:videoModel];
-//        [self.chatTableView reloadData];
-//        [self scrollToBottom];
-//        [[ChatHandler shareInstance]sendVideoMessage:videoModel];
-//    }];
+    [ChatUtil initVideoMessage:videoModel config:_config videoCallback:^(ChatModel *videoModel) {
+        
+        [self.talkMessages addObject:videoModel];
+        [self.chatTableView reloadData];
+        [self scrollToBottom];
+        [[ChatHandler shareInstance]sendVideoMessage:videoModel];
+    }];
+}
+
+#pragma mark - 滚动监听
+- (void)scrollViewDidScroll:(UIScrollView *)scrollView
+{
+    NSLog(@"---------------------XXXXXXXXXX---------------%@",[NSValue valueWithCGPoint:self.chatTableView.contentOffset]);
+    [[NSNotificationCenter defaultCenter]postNotificationName:@"chatUIDidScroll" object:nil];
 }
 
 #pragma mark - 滚动,点击等相关处理
@@ -348,5 +480,49 @@
 {
     self.audioPlayTool = [ChatAudioPlayTool audioPlayTool:path];
     [self.audioPlayTool play];
+}
+
+#pragma mark - 消息长按操作
+- (void)messageHandle:(LongpressSelectHandleType)handleType message:(ChatModel *)messageModel
+{
+    
+    switch (handleType) {
+        case LongpressSelectHandleTypeBack: //撤回消息
+        {
+            NSUInteger index = [self.talkMessages indexOfObject:messageModel];
+            [self.talkMessages removeObject:messageModel];
+            if (index == 0) {
+                ChatModel *repealModelFirst = [ChatUtil initFirstRepealMessage:nil config:messageModel];
+                [self.talkMessages insertObject:repealModelFirst atIndex:0];
+            }
+            ChatModel *repealModel = [ChatUtil initRepealMessage:@"你撤回了一条消息" config:messageModel];
+            [self.talkMessages addObject:repealModel];
+            [self.chatTableView reloadData];
+            [self scrollToBottom];
+            //传输文本
+            [[ChatHandler shareInstance]sendRepealMessage:repealModel];
+            
+        }
+            break;
+        case LongpressSelectHandleTypeDelete:  //删除消息
+        {
+            NSUInteger index = [self.talkMessages indexOfObject:messageModel];
+            [self.talkMessages removeObject:messageModel];
+            if (index == 0) {
+                ChatModel *repealModelFirst = [ChatUtil initFirstRepealMessage:nil config:messageModel];
+                [self.talkMessages insertObject:repealModelFirst atIndex:0];
+            }
+            [self.chatTableView reloadData];
+            [self scrollToBottom];
+        }
+            break;
+        case LongpressSelectHandleTypeTransmit: //消息转发
+        {
+            
+        }
+            break;
+        default:
+            break;
+    }
 }
 @end

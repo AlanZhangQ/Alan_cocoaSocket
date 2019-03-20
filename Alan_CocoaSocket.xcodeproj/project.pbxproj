@@ -8,6 +8,18 @@
 
 /* Begin PBXBuildFile section */
 		1FFBD987178348064307BE13 /* Pods_Alan_CocoaSocket.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 610D60736AB797E0D916FCF4 /* Pods_Alan_CocoaSocket.framework */; };
+		E79580F622243CA000B8576E /* JYChatPrePhotoModel.m in Sources */ = {isa = PBXBuildFile; fileRef = E79580EC22243CA000B8576E /* JYChatPrePhotoModel.m */; };
+		E79580F722243CA000B8576E /* MYAnimationHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = E79580ED22243CA000B8576E /* MYAnimationHelper.m */; };
+		E79580F822243CA000B8576E /* JYChatRollScrollView.m in Sources */ = {isa = PBXBuildFile; fileRef = E79580F222243CA000B8576E /* JYChatRollScrollView.m */; };
+		E79580F922243CA000B8576E /* JYChatZoomScrollView.m in Sources */ = {isa = PBXBuildFile; fileRef = E79580F322243CA000B8576E /* JYChatZoomScrollView.m */; };
+		E79580FA22243CA000B8576E /* JYChatPhotoBrowser.m in Sources */ = {isa = PBXBuildFile; fileRef = E79580F422243CA000B8576E /* JYChatPhotoBrowser.m */; };
+		E79580FD22243D3800B8576E /* UIButton+topImageButton.m in Sources */ = {isa = PBXBuildFile; fileRef = E79580FC22243D3800B8576E /* UIButton+topImageButton.m */; };
+		E7958101222441A200B8576E /* DSToast.m in Sources */ = {isa = PBXBuildFile; fileRef = E7958100222441A200B8576E /* DSToast.m */; };
+		E7ADF8CE222384F10087B230 /* ImagePickerManager.m in Sources */ = {isa = PBXBuildFile; fileRef = E7ADF8CD222384F10087B230 /* ImagePickerManager.m */; };
+		E7ADF8D2222389C00087B230 /* NSObject+alertShow.m in Sources */ = {isa = PBXBuildFile; fileRef = E7ADF8D1222389C00087B230 /* NSObject+alertShow.m */; };
+		E7ADF8D622238AAC0087B230 /* Tool.m in Sources */ = {isa = PBXBuildFile; fileRef = E7ADF8D422238AAB0087B230 /* Tool.m */; };
+		E7ADF8DA22238D960087B230 /* UIViewExt.m in Sources */ = {isa = PBXBuildFile; fileRef = E7ADF8D822238D960087B230 /* UIViewExt.m */; };
+		E7ADF8DE22238E750087B230 /* JYUpLoadTaskModel.m in Sources */ = {isa = PBXBuildFile; fileRef = E7ADF8DC22238E750087B230 /* JYUpLoadTaskModel.m */; };
 		E7AFDEDD2183F43D00773FE6 /* TSMessagesDefaultDesign.json in Resources */ = {isa = PBXBuildFile; fileRef = E7AFDED42183F43D00773FE6 /* TSMessagesDefaultDesign.json */; };
 		E7AFDEDE2183F43D00773FE6 /* Mp3Recorder.m in Sources */ = {isa = PBXBuildFile; fileRef = E7AFDED52183F43D00773FE6 /* Mp3Recorder.m */; };
 		E7AFDEDF2183F43D00773FE6 /* libmp3lame.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E7AFDED62183F43D00773FE6 /* libmp3lame.a */; };
@@ -22,6 +34,7 @@
 		E7AFDEF72184A7C700773FE6 /* ChatTipCell.m in Sources */ = {isa = PBXBuildFile; fileRef = E7AFDEF62184A7C700773FE6 /* ChatTipCell.m */; };
 		E7AFDEFA2184A7E000773FE6 /* ChatVideoCell.m in Sources */ = {isa = PBXBuildFile; fileRef = E7AFDEF92184A7E000773FE6 /* ChatVideoCell.m */; };
 		E7AFDEFD2184A90400773FE6 /* ChatUtil.m in Sources */ = {isa = PBXBuildFile; fileRef = E7AFDEFC2184A90400773FE6 /* ChatUtil.m */; };
+		E7B447EF223248020086DA77 /* ChatTimeCell.m in Sources */ = {isa = PBXBuildFile; fileRef = E7B447EE223248020086DA77 /* ChatTimeCell.m */; };
 		E7CC9646217C1D0A004356DA /* ChatListCell.m in Sources */ = {isa = PBXBuildFile; fileRef = E7CC9644217C1D0A004356DA /* ChatListCell.m */; };
 		E7CC9647217C1D0A004356DA /* ChatListCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E7CC9645217C1D0A004356DA /* ChatListCell.xib */; };
 		E7CC964B217C6F0B004356DA /* BaseViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = E7CC9649217C6F0B004356DA /* BaseViewController.m */; };
@@ -84,6 +97,7 @@
 		E7D2955E217B07ED00135798 /* ChatAlbumModel.m in Sources */ = {isa = PBXBuildFile; fileRef = E7D2955A217B07EC00135798 /* ChatAlbumModel.m */; };
 		E7D2955F217B07ED00135798 /* ChatConfigModel.m in Sources */ = {isa = PBXBuildFile; fileRef = E7D2955B217B07EC00135798 /* ChatConfigModel.m */; };
 		E7D29560217B07ED00135798 /* ChatModel.m in Sources */ = {isa = PBXBuildFile; fileRef = E7D2955C217B07EC00135798 /* ChatModel.m */; };
+		E7DE18DE222EBE06008FC16E /* ChatReaplCell.m in Sources */ = {isa = PBXBuildFile; fileRef = E7DE18DC222EBE05008FC16E /* ChatReaplCell.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -109,6 +123,31 @@
 		8504CE94F8AD01D74B31890F /* Pods-Alan_CocoaSocket.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Alan_CocoaSocket.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Alan_CocoaSocket/Pods-Alan_CocoaSocket.debug.xcconfig"; sourceTree = "<group>"; };
 		CCD1BDF04A4C1158A542F0BB /* Pods-Alan_CocoaSocket.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Alan_CocoaSocket.release.xcconfig"; path = "Pods/Target Support Files/Pods-Alan_CocoaSocket/Pods-Alan_CocoaSocket.release.xcconfig"; sourceTree = "<group>"; };
 		DBD1AC429C05EA117E77F030 /* libPods-Alan_CocoaSocketTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Alan_CocoaSocketTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		E79580EB22243CA000B8576E /* JYChatRollScrollView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JYChatRollScrollView.h; sourceTree = "<group>"; };
+		E79580EC22243CA000B8576E /* JYChatPrePhotoModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JYChatPrePhotoModel.m; sourceTree = "<group>"; };
+		E79580ED22243CA000B8576E /* MYAnimationHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MYAnimationHelper.m; sourceTree = "<group>"; };
+		E79580EE22243CA000B8576E /* JYChatPhotoBrowser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JYChatPhotoBrowser.h; sourceTree = "<group>"; };
+		E79580EF22243CA000B8576E /* JYChatZoomScrollView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JYChatZoomScrollView.h; sourceTree = "<group>"; };
+		E79580F022243CA000B8576E /* MYAnimationHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MYAnimationHelper.h; sourceTree = "<group>"; };
+		E79580F122243CA000B8576E /* JYChatPrePhotoModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JYChatPrePhotoModel.h; sourceTree = "<group>"; };
+		E79580F222243CA000B8576E /* JYChatRollScrollView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JYChatRollScrollView.m; sourceTree = "<group>"; };
+		E79580F322243CA000B8576E /* JYChatZoomScrollView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JYChatZoomScrollView.m; sourceTree = "<group>"; };
+		E79580F422243CA000B8576E /* JYChatPhotoBrowser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JYChatPhotoBrowser.m; sourceTree = "<group>"; };
+		E79580F522243CA000B8576E /* CommonDefine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CommonDefine.h; sourceTree = "<group>"; };
+		E79580FB22243D3800B8576E /* UIButton+topImageButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIButton+topImageButton.h"; sourceTree = "<group>"; };
+		E79580FC22243D3800B8576E /* UIButton+topImageButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIButton+topImageButton.m"; sourceTree = "<group>"; };
+		E79580FF222441A200B8576E /* DSToast.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DSToast.h; sourceTree = "<group>"; };
+		E7958100222441A200B8576E /* DSToast.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DSToast.m; sourceTree = "<group>"; };
+		E7ADF8CC222384F10087B230 /* ImagePickerManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ImagePickerManager.h; sourceTree = "<group>"; };
+		E7ADF8CD222384F10087B230 /* ImagePickerManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ImagePickerManager.m; sourceTree = "<group>"; };
+		E7ADF8D0222389C00087B230 /* NSObject+alertShow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSObject+alertShow.h"; sourceTree = "<group>"; };
+		E7ADF8D1222389C00087B230 /* NSObject+alertShow.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSObject+alertShow.m"; sourceTree = "<group>"; };
+		E7ADF8D422238AAB0087B230 /* Tool.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Tool.m; sourceTree = "<group>"; };
+		E7ADF8D522238AAB0087B230 /* Tool.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Tool.h; sourceTree = "<group>"; };
+		E7ADF8D822238D960087B230 /* UIViewExt.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UIViewExt.m; sourceTree = "<group>"; };
+		E7ADF8D922238D960087B230 /* UIViewExt.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UIViewExt.h; sourceTree = "<group>"; };
+		E7ADF8DC22238E750087B230 /* JYUpLoadTaskModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JYUpLoadTaskModel.m; sourceTree = "<group>"; };
+		E7ADF8DD22238E750087B230 /* JYUpLoadTaskModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JYUpLoadTaskModel.h; sourceTree = "<group>"; };
 		E7AFDED22183F43D00773FE6 /* ChatAudioPlayTool.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ChatAudioPlayTool.h; sourceTree = "<group>"; };
 		E7AFDED42183F43D00773FE6 /* TSMessagesDefaultDesign.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = TSMessagesDefaultDesign.json; sourceTree = "<group>"; };
 		E7AFDED52183F43D00773FE6 /* Mp3Recorder.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Mp3Recorder.m; sourceTree = "<group>"; };
@@ -136,6 +175,8 @@
 		E7AFDEF92184A7E000773FE6 /* ChatVideoCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ChatVideoCell.m; sourceTree = "<group>"; };
 		E7AFDEFB2184A90400773FE6 /* ChatUtil.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ChatUtil.h; sourceTree = "<group>"; };
 		E7AFDEFC2184A90400773FE6 /* ChatUtil.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ChatUtil.m; sourceTree = "<group>"; };
+		E7B447ED223248020086DA77 /* ChatTimeCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ChatTimeCell.h; sourceTree = "<group>"; };
+		E7B447EE223248020086DA77 /* ChatTimeCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ChatTimeCell.m; sourceTree = "<group>"; };
 		E7CC9643217C1D0A004356DA /* ChatListCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ChatListCell.h; sourceTree = "<group>"; };
 		E7CC9644217C1D0A004356DA /* ChatListCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ChatListCell.m; sourceTree = "<group>"; };
 		E7CC9645217C1D0A004356DA /* ChatListCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ChatListCell.xib; sourceTree = "<group>"; };
@@ -260,6 +301,8 @@
 		E7D2955B217B07EC00135798 /* ChatConfigModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ChatConfigModel.m; sourceTree = "<group>"; };
 		E7D2955C217B07EC00135798 /* ChatModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ChatModel.m; sourceTree = "<group>"; };
 		E7D2955D217B07EC00135798 /* ChatAlbumModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ChatAlbumModel.h; sourceTree = "<group>"; };
+		E7DE18DC222EBE05008FC16E /* ChatReaplCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ChatReaplCell.m; sourceTree = "<group>"; };
+		E7DE18DD222EBE05008FC16E /* ChatReaplCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ChatReaplCell.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -308,6 +351,81 @@
 			name = Pods;
 			sourceTree = "<group>";
 		};
+		E79580DA22243B1100B8576E /* ChatPicturePreView(照片预览) */ = {
+			isa = PBXGroup;
+			children = (
+				E79580FE222441A200B8576E /* DSToast */,
+				E79580EA22243CA000B8576E /* ChatPicturePreView(照片预览) */,
+			);
+			path = "ChatPicturePreView(照片预览)";
+			sourceTree = "<group>";
+		};
+		E79580EA22243CA000B8576E /* ChatPicturePreView(照片预览) */ = {
+			isa = PBXGroup;
+			children = (
+				E79580FB22243D3800B8576E /* UIButton+topImageButton.h */,
+				E79580FC22243D3800B8576E /* UIButton+topImageButton.m */,
+				E79580EB22243CA000B8576E /* JYChatRollScrollView.h */,
+				E79580EC22243CA000B8576E /* JYChatPrePhotoModel.m */,
+				E79580ED22243CA000B8576E /* MYAnimationHelper.m */,
+				E79580EE22243CA000B8576E /* JYChatPhotoBrowser.h */,
+				E79580EF22243CA000B8576E /* JYChatZoomScrollView.h */,
+				E79580F022243CA000B8576E /* MYAnimationHelper.h */,
+				E79580F122243CA000B8576E /* JYChatPrePhotoModel.h */,
+				E79580F222243CA000B8576E /* JYChatRollScrollView.m */,
+				E79580F322243CA000B8576E /* JYChatZoomScrollView.m */,
+				E79580F422243CA000B8576E /* JYChatPhotoBrowser.m */,
+				E79580F522243CA000B8576E /* CommonDefine.h */,
+			);
+			name = "ChatPicturePreView(照片预览)";
+			sourceTree = "<group>";
+		};
+		E79580FE222441A200B8576E /* DSToast */ = {
+			isa = PBXGroup;
+			children = (
+				E79580FF222441A200B8576E /* DSToast.h */,
+				E7958100222441A200B8576E /* DSToast.m */,
+			);
+			path = DSToast;
+			sourceTree = "<group>";
+		};
+		E7ADF8CF222389C00087B230 /* Alert */ = {
+			isa = PBXGroup;
+			children = (
+				E7ADF8D0222389C00087B230 /* NSObject+alertShow.h */,
+				E7ADF8D1222389C00087B230 /* NSObject+alertShow.m */,
+			);
+			name = Alert;
+			path = Helper/Alert;
+			sourceTree = "<group>";
+		};
+		E7ADF8D322238AAB0087B230 /* HUDTool */ = {
+			isa = PBXGroup;
+			children = (
+				E7ADF8D422238AAB0087B230 /* Tool.m */,
+				E7ADF8D522238AAB0087B230 /* Tool.h */,
+			);
+			path = HUDTool;
+			sourceTree = "<group>";
+		};
+		E7ADF8D722238D960087B230 /* UIView+EX */ = {
+			isa = PBXGroup;
+			children = (
+				E7ADF8D822238D960087B230 /* UIViewExt.m */,
+				E7ADF8D922238D960087B230 /* UIViewExt.h */,
+			);
+			path = "UIView+EX";
+			sourceTree = "<group>";
+		};
+		E7ADF8DB22238E750087B230 /* Upload */ = {
+			isa = PBXGroup;
+			children = (
+				E7ADF8DC22238E750087B230 /* JYUpLoadTaskModel.m */,
+				E7ADF8DD22238E750087B230 /* JYUpLoadTaskModel.h */,
+			);
+			path = Upload;
+			sourceTree = "<group>";
+		};
 		E7AFDED12183F43C00773FE6 /* ChatRecord */ = {
 			isa = PBXGroup;
 			children = (
@@ -346,6 +464,11 @@
 		E7AFDEE821846A3200773FE6 /* ChatCells */ = {
 			isa = PBXGroup;
 			children = (
+				E79580DA22243B1100B8576E /* ChatPicturePreView(照片预览) */,
+				E7DE18DD222EBE05008FC16E /* ChatReaplCell.h */,
+				E7DE18DC222EBE05008FC16E /* ChatReaplCell.m */,
+				E7B447ED223248020086DA77 /* ChatTimeCell.h */,
+				E7B447EE223248020086DA77 /* ChatTimeCell.m */,
 				E7AFDEE921846B6700773FE6 /* ChatAudioCell.h */,
 				E7AFDEEA21846B6700773FE6 /* ChatAudioCell.m */,
 				E7AFDEEC218493B300773FE6 /* ChatImageCell.h */,
@@ -480,6 +603,10 @@
 		E7D294CB217B00C500135798 /* Common */ = {
 			isa = PBXGroup;
 			children = (
+				E7ADF8DB22238E750087B230 /* Upload */,
+				E7ADF8D722238D960087B230 /* UIView+EX */,
+				E7ADF8D322238AAB0087B230 /* HUDTool */,
+				E7ADF8CF222389C00087B230 /* Alert */,
 				E7CC9648217C6F0B004356DA /* BaseController */,
 				E7D29522217B06C400135798 /* Helper */,
 				E7D2950F217B068B00135798 /* Category */,
@@ -617,6 +744,8 @@
 		E7D29522217B06C400135798 /* Helper */ = {
 			isa = PBXGroup;
 			children = (
+				E7ADF8CC222384F10087B230 /* ImagePickerManager.h */,
+				E7ADF8CD222384F10087B230 /* ImagePickerManager.m */,
 				E7D29523217B06C400135798 /* TZImagePickerController */,
 				E7D2953F217B06C400135798 /* MYCoreTextLabel */,
 			);
@@ -844,15 +973,19 @@
 				"${SRCROOT}/Pods/Target Support Files/Pods-Alan_CocoaSocket/Pods-Alan_CocoaSocket-frameworks.sh",
 				"${BUILT_PRODUCTS_DIR}/CocoaAsyncSocket/CocoaAsyncSocket.framework",
 				"${BUILT_PRODUCTS_DIR}/FMDB/FMDB.framework",
+				"${BUILT_PRODUCTS_DIR}/MBProgressHUD/MBProgressHUD.framework",
 				"${BUILT_PRODUCTS_DIR}/MJExtension/MJExtension.framework",
 				"${BUILT_PRODUCTS_DIR}/SDWebImage/SDWebImage.framework",
+				"${BUILT_PRODUCTS_DIR}/libextobjc/libextobjc.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/CocoaAsyncSocket.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/FMDB.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/MBProgressHUD.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/MJExtension.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SDWebImage.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/libextobjc.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -866,11 +999,14 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E7ADF8D622238AAC0087B230 /* Tool.m in Sources */,
+				E7ADF8DE22238E750087B230 /* JYUpLoadTaskModel.m in Sources */,
 				E7AFDEE721841C4E00773FE6 /* ChatKeyboard.m in Sources */,
 				E7D294FC217B057A00135798 /* PingFoundation.m in Sources */,
 				E7D29556217B06C400135798 /* MYSubCoretextResult.m in Sources */,
 				E7AFDEFD2184A90400773FE6 /* ChatUtil.m in Sources */,
 				E7AFDEE02183F43D00773FE6 /* ChatRecordTool.m in Sources */,
+				E79580F922243CA000B8576E /* JYChatZoomScrollView.m in Sources */,
 				E7D29555217B06C400135798 /* MYCoreTextLabel.m in Sources */,
 				E7AFDEEE218493B300773FE6 /* ChatImageCell.m in Sources */,
 				E7AFDEFA2184A7E000773FE6 /* ChatVideoCell.m in Sources */,
@@ -881,14 +1017,18 @@
 				E7CC9654217C73D1004356DA /* ThirdViewController.m in Sources */,
 				E7D29506217B057A00135798 /* ReachStateWIFI.m in Sources */,
 				E7D29548217B06C400135798 /* TZVideoPlayerController.m in Sources */,
+				E7ADF8DA22238D960087B230 /* UIViewExt.m in Sources */,
 				E7D294D3217B00C500135798 /* ChatTabbarController.m in Sources */,
 				E7D294D4217B00C500135798 /* ChatTabbar.m in Sources */,
+				E7ADF8D2222389C00087B230 /* NSObject+alertShow.m in Sources */,
 				E7D29501217B057A00135798 /* ReachStateUnReachable.m in Sources */,
 				E7CC964B217C6F0B004356DA /* BaseViewController.m in Sources */,
 				E7D294C6217AFFBF00135798 /* AppDelegate.m in Sources */,
+				E79580FA22243CA000B8576E /* JYChatPhotoBrowser.m in Sources */,
 				E7D2954F217B06C400135798 /* TZImageManager.m in Sources */,
 				E7D29521217B068B00135798 /* NSString+extension.m in Sources */,
 				E7D294FD217B057A00135798 /* PingHelper.m in Sources */,
+				E7ADF8CE222384F10087B230 /* ImagePickerManager.m in Sources */,
 				E7D2951E217B068B00135798 /* UIImageView+SDWebImage.m in Sources */,
 				E7D2950D217B05B200135798 /* AccountTool.m in Sources */,
 				E7D2954B217B06C400135798 /* UIView+Layout.m in Sources */,
@@ -908,27 +1048,34 @@
 				E7AFDEF72184A7C700773FE6 /* ChatTipCell.m in Sources */,
 				E7D29520217B068B00135798 /* NSDate+extension.m in Sources */,
 				E7D2954C217B06C400135798 /* TZPhotoPreviewController.m in Sources */,
+				E79580F822243CA000B8576E /* JYChatRollScrollView.m in Sources */,
 				E7CC9646217C1D0A004356DA /* ChatListCell.m in Sources */,
 				E7D29554217B06C400135798 /* MYCoretextResultTool.m in Sources */,
 				E7D2954E217B06C400135798 /* TZProgressView.m in Sources */,
 				E7D294D9217B00F600135798 /* ChatNavigationController.m in Sources */,
+				E7958101222441A200B8576E /* DSToast.m in Sources */,
 				E7CC965D217C8B00004356DA /* ChatHandler.m in Sources */,
 				E7D294FF217B057A00135798 /* ReachState.m in Sources */,
 				E7D29560217B07ED00135798 /* ChatModel.m in Sources */,
 				E7CC965A217C746A004356DA /* ChatListViewController.m in Sources */,
 				E7D29507217B057A00135798 /* RealReachability.m in Sources */,
 				E7D29547217B06C400135798 /* TZAssetCell.m in Sources */,
+				E79580F722243CA000B8576E /* MYAnimationHelper.m in Sources */,
 				E7D29503217B057A00135798 /* ReachStateLoading.m in Sources */,
+				E79580F622243CA000B8576E /* JYChatPrePhotoModel.m in Sources */,
 				E7CC9651217C73C3004356DA /* ChatViewController.m in Sources */,
 				E7AFDEEB21846B6700773FE6 /* ChatAudioCell.m in Sources */,
 				E7D29550217B06C400135798 /* TZPhotoPickerController.m in Sources */,
+				E7DE18DE222EBE06008FC16E /* ChatReaplCell.m in Sources */,
 				E7CC9657217C743E004356DA /* LastViewController.m in Sources */,
 				E7D29505217B057A00135798 /* FSMStateUtil.m in Sources */,
 				E7D2951F217B068B00135798 /* UIImage+colorImage.m in Sources */,
 				E7D2954A217B06C400135798 /* NSBundle+TZImagePicker.m in Sources */,
+				E79580FD22243D3800B8576E /* UIButton+topImageButton.m in Sources */,
 				E7D29552217B06C400135798 /* TZImagePickerController.m in Sources */,
 				E7D29500217B057A00135798 /* ReachStateUnloaded.m in Sources */,
 				E7D2955E217B07ED00135798 /* ChatAlbumModel.m in Sources */,
+				E7B447EF223248020086DA77 /* ChatTimeCell.m in Sources */,
 				E7D2951D217B068B00135798 /* UIImageView+GIF.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

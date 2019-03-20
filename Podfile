@@ -13,6 +13,8 @@ target 'Alan_CocoaSocket' do
   pod 'MJExtension', '3.0.13'
   pod 'FMDB', '2.6.2'
   pod 'SDWebImage', '4.0.0-beta2'
+  pod 'MBProgressHUD', '1.1.0'
+  pod 'libextobjc', '0.6'
   
   use_frameworks!
 

@@ -460,6 +460,77 @@ NSInteger autoConnectCount = TCP_AutoConnectCount;
 //发送视频消息
 - (void)sendVideoMessage:(ChatModel *)videoModel
 {
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        
+        //模拟服务器回执
+        ChatModel *receipet = [[ChatModel alloc]init];
+        receipet.messageType = Message_NormalReceipt;
+        receipet.sendTime = videoModel.sendTime;
+        ChatMessageType type = ChatMessageType_NormalReceipt;
+        for (id<ChatHandlerDelegate>delegate in self.delegates) {
+            if ([delegate respondsToSelector:@selector(didReceiveMessage:type:)]) {
+                [delegate didReceiveMessage:receipet type:type];
+            }
+        }
+    });
+    
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+
+        //模拟回复
+        ChatModel *reply = [[ChatModel alloc]init];
+        ChatContentModel *content = [[ChatContentModel alloc]init];
+        reply.content = content;
+        reply.content.text = @"我已经收到视频消息";
+        reply.messageType = Message_Normal;
+        reply.contenType = Content_Text;
+        reply.toUserID = videoModel.fromUserID;
+        reply.chatType = @"userChat";
+        reply.byMyself = @0;
+        ChatMessageType type = ChatMessageType_Normal;
+        for (id<ChatHandlerDelegate>delegate in self.delegates) {
+            if ([delegate respondsToSelector:@selector(didReceiveMessage:type:)]) {
+                [delegate didReceiveMessage:reply type:type];
+            }
+        }
+    });
+}
+
+//发送撤回消息
+- (void)sendRepealMessage:(ChatModel *)textModel
+{
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        
+        //模拟服务器回执
+        ChatModel *receipet = [[ChatModel alloc]init];
+        receipet.messageType = Message_NormalReceipt;
+        receipet.sendTime = textModel.sendTime;
+        ChatMessageType type = ChatMessageType_NormalReceipt;
+        for (id<ChatHandlerDelegate>delegate in self.delegates) {
+            if ([delegate respondsToSelector:@selector(didReceiveMessage:type:)]) {
+                [delegate didReceiveMessage:receipet type:type];
+            }
+        }
+    });
+    
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        
+        //模拟回复
+        ChatModel *reply = [[ChatModel alloc]init];
+        ChatContentModel *content = [[ChatContentModel alloc]init];
+        reply.content = content;
+        reply.content.text = @"我已经收到撤回消息";
+        reply.messageType = Message_Normal;
+        reply.contenType = Content_Text;
+        reply.toUserID = textModel.fromUserID;
+        reply.chatType = @"userChat";
+        reply.byMyself = @0;
+        ChatMessageType type = ChatMessageType_Normal;
+        for (id<ChatHandlerDelegate>delegate in self.delegates) {
+            if ([delegate respondsToSelector:@selector(didReceiveMessage:type:)]) {
+                [delegate didReceiveMessage:reply type:type];
+            }
+        }
+    });
 }
 
 @end

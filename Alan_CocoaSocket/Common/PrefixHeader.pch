@@ -20,5 +20,11 @@
 #import "NSDate+extension.h"
 #import "NSString+extension.h"
 #import "UIImageView+GIF.h"
+#import "NSObject+alertShow.h"
+#import "Tool.h"
+#import "DSToast.h"
+#import "extobjc.h"
+#import "CommonDefine.h"
+#import "UIViewExt.h"
 
 #endif /* PrefixHeader_pch */
